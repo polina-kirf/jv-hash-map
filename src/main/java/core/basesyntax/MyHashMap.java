@@ -26,7 +26,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
         if (current == null) {
             buckets[index] = new Node<>(key, value, hash);
-            size++;
+            increaseSizeAndCheckResize();
             return;
         }
 
@@ -41,11 +41,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             current = current.next;
         }
         prev.next = new Node<>(key, value, hash);
-        size++;
-
-        if (size >= threshold) {
-            resize();
-        }
+        increaseSizeAndCheckResize();
     }
 
     @Override
@@ -77,6 +73,13 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         return Math.abs(hash % buckets.length);
     }
 
+    private void increaseSizeAndCheckResize() {
+        size++;
+        if (size >= threshold) {
+            resize();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void resize() {
         int newCapacity = buckets.length * 2;
@@ -99,12 +102,12 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     }
 
     private static class Node<K, V> {
-        private K key;
+        private final K key;
         private V value;
         private Node<K, V> next;
-        private int hash;
+        private final int hash;
 
-        public Node(K key, V value, int hash) {
+        Node(K key, V value, int hash) {
             this.key = key;
             this.value = value;
             this.hash = hash;
